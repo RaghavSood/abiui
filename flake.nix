@@ -32,7 +32,7 @@
                   languages.typescript.enable = true;
                   languages.javascript = {
                     enable = true;
-                    package = pkgs.nodejs_21;
+                    package = pkgs.nodejs_22;
                   };
 
                   enterShell = ''
