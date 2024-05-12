@@ -6,6 +6,9 @@
 <script lang="ts">
   import { writable } from 'svelte/store';
   import ContractCard from './ContractCard.svelte';
+  import { onMount } from 'svelte'
+  import { defaultEvmStores as evm } from 'svelte-web3'
+  import { web3, selectedAccount, connected, chainId } from 'svelte-web3'
 
   let address = '';
   let abi = '';
@@ -23,9 +26,18 @@
     abi = '';
     title = '';
   }
+
+  onMount(() => {
+  })
+
 </script>
 
 <main>
+  {#if $connected}
+    <p>Connected to {$chainId} with account {$selectedAccount}</p>
+  {:else}
+    <button on:click={() => evm.setProvider()} class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Connect Wallet</button>
+  {/if}
   <form on:submit|preventDefault={addContract} class="space-y-4">
   <div>
     <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
