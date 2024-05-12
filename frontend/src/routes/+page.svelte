@@ -1,59 +1,49 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
-</script>
-
 <svelte:head>
 	<title>Home</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+<script lang="ts">
+  import { writable } from 'svelte/store';
+  import ContractCard from './ContractCard.svelte';
 
-		to your new<br />SvelteKit app
-	</h1>
+  let address = '';
+  let abi = '';
+  let title = '';
+  let contracts = writable([]);
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
+  function addContract() {
+    contracts.update(currentContracts => [
+      ...currentContracts,
+      { title, address, abi }
+    ]);
 
-	<Counter />
-</section>
+    // Clear the form fields after adding the contract
+    address = '';
+    abi = '';
+    title = '';
+  }
+</script>
 
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
+<main>
+  <form on:submit|preventDefault={addContract} class="space-y-4">
+  <div>
+    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+    <input type="text" id="title" bind:value={title} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Contract Title" required>
+  </div>
+  <div>
+    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+    <input type="text" id="address" bind:value={address} class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Contract Address" required>
+  </div>
+  <div>
+    <label for="abi" class="block text-sm font-medium text-gray-700">ABI</label>
+    <textarea id="abi" bind:value={abi} rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Contract ABI" required></textarea>
+  </div>
+  <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add Contract</button>
+</form>
 
-	h1 {
-		width: 100%;
-	}
+{#each $contracts as contract (contract.address)}
+  <ContractCard {contract} />
+{/each}
+</main>
 
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
